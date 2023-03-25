@@ -1,40 +1,73 @@
-const STATUS = document.getElementById("status");
-const VIDEO = document.getElementById("webcam");
-const VIDEO_1 = document.getElementById("webcam1");
-const VIDEO_2 = document.getElementById("webcam2");
-const ENABLE_CAM_BUTTON = document.getElementById("enableCam");
-const ENABLE_CAM_BUTTON_1 = document.getElementById("enableCam1");
-// const ENABLE_CAM_BUTTON_2 = document.getElementById("enableCam2");
-// const RESET_BUTTON = document.getElementById("reset");
-const TRAIN_BUTTON = document.getElementById("train");
+const STATUS = document.getElementById('status');
+const VIDEO = document.getElementById('webcam');
+const VIDEO_1 = document.getElementById('webcam1');
+const VIDEO_2 = document.getElementById('webcam2');
+const ENABLE_CAM_BUTTON = document.getElementById('enableCam');
+const ENABLE_CAM_BUTTON_1 = document.getElementById('enableCam1');
+const INPUT_1 = document.getElementById('class1_input');
+const INPUT_2 = document.getElementById('class2_input');
+
+const TRAIN_BUTTON = document.getElementById('train');
 const MOBILE_NET_INPUT_WIDTH = 224;
 const MOBILE_NET_INPUT_HEIGHT = 224;
+const DATA_COLLECTOR_BUTTON_1 = document.getElementById('data-collector-1');
+const DATA_COLLECTOR_BUTTON_2 = document.getElementById('data-collector-2');
 const STOP_DATA_GATHER = -1;
 const CLASS_NAMES = [];
 let videoPlaying_1 = false;
 let videoPlaying_2 = false;
 let videoPlaying_3 = false;
 let videoPlaying = false;
+let snapshots = [];
 
-ENABLE_CAM_BUTTON.addEventListener("click", () => enableCam(VIDEO));
-ENABLE_CAM_BUTTON_1.addEventListener("click", () => enableCam(VIDEO_1));
-// ENABLE_CAM_BUTTON_2.addEventListener("click", () => enableCam(VIDEO_2));
-TRAIN_BUTTON.addEventListener("click", () => {
-  enableCam(VIDEO_2,trainAndPredict);
+function changeVisibility(elRef, displayProp) {
+  elRef.style.visibility = displayProp;
 }
-);
-// RESET_BUTTON.addEventListener("click", reset);
+
+INPUT_1.addEventListener('change', (e) => {
+  const text = document.getElementById('data-collector-1');
+  document.getElementById('data-collector-1').innerText += ' (' + e.target.value + ')';
+  text.setAttribute('data-name', e.target.value);
+  CLASS_NAMES[0] = e.target.value;
+});
+
+INPUT_2.addEventListener('change', (e) => {
+  const text = document.getElementById('data-collector-2');
+  document.getElementById('data-collector-2').innerText += ' (' + e.target.value + ')';
+  text.setAttribute('data-name', e.target.value);
+  CLASS_NAMES[1] = e.target.value;
+});
+
+ENABLE_CAM_BUTTON.addEventListener('click', () => enableCam(VIDEO));
+ENABLE_CAM_BUTTON_1.addEventListener('click', () => enableCam(VIDEO_1));
+
+webcamStop.addEventListener('click', () => stopGather1(VIDEO));
+webcam1Stop.addEventListener('click', () => stopGather2(VIDEO_1));
+
+TRAIN_BUTTON.addEventListener('click', () => {
+  enableCam(VIDEO_2, trainAndPredict);
+});
+
+let dataCollectorButtons = document.querySelectorAll('button.dataCollector');
+function stopGather1() {
+  gatherDataState = STOP_DATA_GATHER;
+  videoPlaying_1 = false;
+}
+function stopGather2() {
+  gatherDataState = STOP_DATA_GATHER;
+
+  // videoPlaying_2 = false;
+}
 
 // Just add more buttons in HTML to allow classification of more classes of data!
-let dataCollectorButtons = document.querySelectorAll("button.dataCollector");
 for (let i = 0; i < dataCollectorButtons.length; i++) {
-  dataCollectorButtons[i].addEventListener("mousedown", gatherDataForClass);
-  dataCollectorButtons[i].addEventListener("mouseup", gatherDataForClass);
+  dataCollectorButtons[i].addEventListener('mousedown', gatherDataForClass);
+  dataCollectorButtons[i].addEventListener('mouseup', gatherDataForClass);
   // For mobile.
-  dataCollectorButtons[i].addEventListener("touchend", gatherDataForClass);
+  dataCollectorButtons[i].addEventListener('touchend', gatherDataForClass);
 
   // Populate the human readable names for classes.
-  CLASS_NAMES.push(dataCollectorButtons[i].getAttribute("data-name"));
+  CLASS_NAMES.push(dataCollectorButtons[i].getAttribute('data-name'));
 }
 
 let mobilenet = undefined;
@@ -48,16 +81,13 @@ let predict = false;
  * Loads the MobileNet model and warms it up so ready for use.
  **/
 async function loadMobileNetFeatureModel() {
-  const URL =
-    "https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v3_small_100_224/feature_vector/5/default/1";
+  const URL = 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v3_small_100_224/feature_vector/5/default/1';
   mobilenet = await tf.loadGraphModel(URL, { fromTFHub: true });
-  STATUS.innerText = "MobileNet v3 loaded successfully!";
+  STATUS.innerText = 'AI ready for training and predict';
 
   // Warm up the model by passing zeros through it once.
   tf.tidy(function () {
-    let answer = mobilenet.predict(
-      tf.zeros([1, MOBILE_NET_INPUT_HEIGHT, MOBILE_NET_INPUT_WIDTH, 3])
-    );
+    let answer = mobilenet.predict(tf.zeros([1, MOBILE_NET_INPUT_HEIGHT, MOBILE_NET_INPUT_WIDTH, 3]));
     console.log(answer.shape);
   });
 }
@@ -65,25 +95,20 @@ async function loadMobileNetFeatureModel() {
 loadMobileNetFeatureModel();
 
 let model = tf.sequential();
-model.add(
-  tf.layers.dense({ inputShape: [1024], units: 128, activation: "relu" })
-);
-model.add(
-  tf.layers.dense({ units: CLASS_NAMES.length, activation: "softmax" })
-);
+model.add(tf.layers.dense({ inputShape: [1024], units: 128, activation: 'relu' }));
+model.add(tf.layers.dense({ units: CLASS_NAMES.length, activation: 'softmax' }));
 
 model.summary();
 
 // Compile the model with the defined optimizer and specify a loss function to use.
 model.compile({
   // Adam changes the learning rate over time which is useful.
-  optimizer: "adam",
+  optimizer: 'adam',
   // Use the correct loss function. If 2 classes of data, must use binaryCrossentropy.
   // Else categoricalCrossentropy is used if more than 2 classes.
-  loss:
-    CLASS_NAMES.length === 2 ? "binaryCrossentropy" : "categoricalCrossentropy",
+  loss: CLASS_NAMES.length === 2 ? 'binaryCrossentropy' : 'categoricalCrossentropy',
   // As this is a classification problem you can record accuracy in the logs too!
-  metrics: ["accuracy"]
+  metrics: ['accuracy'],
 });
 
 /**
@@ -102,15 +127,20 @@ function enableCam(VIDEO_ELEMENT, fn) {
     const constraints = {
       video: true,
       width: 280,
-      height: 280
+      height: 280,
     };
-  // console.log("Vide", VIDEO);
-    if((VIDEO_ELEMENT === VIDEO)) {
+    // console.log("Vide", VIDEO);
+    if (VIDEO_ELEMENT === VIDEO) {
       videoPlaying_1 = true;
+      videoPlaying_2 = false;
+
       VIDEO_1.pause();
-    } else if(VIDEO_ELEMENT === VIDEO_1) {
+      snapshots = [];
+    } else if (VIDEO_ELEMENT === VIDEO_1) {
       videoPlaying_2 = true;
+      videoPlaying_1 = false;
       VIDEO.pause();
+      snapshots = [];
     } else {
       VIDEO.pause();
       VIDEO_1.pause();
@@ -120,16 +150,15 @@ function enableCam(VIDEO_ELEMENT, fn) {
     // Activate the webcam stream.
     navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
       VIDEO_ELEMENT.srcObject = stream;
-      VIDEO_ELEMENT.addEventListener("loadeddata", function () {
+      VIDEO_ELEMENT.addEventListener('loadeddata', function () {
         videoPlaying = true;
-        if(fn){
-        fn();
+        if (fn) {
+          fn();
         }
-        // ENABLE_CAM_BUTTON.classList.add("removed");
       });
     });
   } else {
-    console.warn("getUserMedia() is not supported by your browser");
+    console.warn('getUserMedia() is not supported by your browser');
   }
 }
 
@@ -137,9 +166,11 @@ function enableCam(VIDEO_ELEMENT, fn) {
  * Handle Data Gather for button mouseup/mousedown.
  **/
 function gatherDataForClass() {
-  let classNumber = parseInt(this.getAttribute("data-1hot"));
-  gatherDataState =
-    gatherDataState === STOP_DATA_GATHER ? classNumber : STOP_DATA_GATHER;
+  let classNumber = parseInt(this.getAttribute('data-1hot'));
+  if (classNumber == 0) {
+    videoPlaying_1 = true;
+  }
+  gatherDataState = gatherDataState === STOP_DATA_GATHER ? classNumber : STOP_DATA_GATHER;
   dataGatherLoop();
 }
 
@@ -156,6 +187,9 @@ function calculateFeaturesOnCurrentFrame(video) {
 
     let normalizedTensorFrame = resizedTensorFrame.div(255);
 
+    try {
+      shoot(video);
+    } catch (e) {}
     return mobilenet.predict(normalizedTensorFrame.expandDims()).squeeze();
   });
 }
@@ -165,15 +199,13 @@ function calculateFeaturesOnCurrentFrame(video) {
  **/
 function dataGatherLoop() {
   // Only gather data if webcam is on and a relevent button is pressed.
-  if (videoPlaying && gatherDataState !== STOP_DATA_GATHER) {
+  if (gatherDataState !== STOP_DATA_GATHER) {
     // Ensure tensors are cleaned up.
     let imageFeatures;
-    if(videoPlaying_1)
-    imageFeatures = calculateFeaturesOnCurrentFrame(VIDEO);
-    else
-    imageFeatures = calculateFeaturesOnCurrentFrame(VIDEO_1)
+    if (videoPlaying_1) imageFeatures = calculateFeaturesOnCurrentFrame(VIDEO);
+    else imageFeatures = calculateFeaturesOnCurrentFrame(VIDEO_1);
     // let imageFeatures_1 = calculateFeaturesOnCurrentFrame(VIDEO_1);
-  // console.log(CLASS_NAMES)
+    // console.log(CLASS_NAMES)
     trainingDataInputs.push(imageFeatures);
     // trainingDataInputs.push(imageFeatures_1);
     trainingDataOutputs.push(gatherDataState);
@@ -184,11 +216,12 @@ function dataGatherLoop() {
     }
     // Increment counts of examples for user interface to show.
     examplesCount[gatherDataState]++;
+    if (TRAIN_BUTTON.disabled && examplesCount[0] > 0 && examplesCount[1] > 0) TRAIN_BUTTON.disabled = false;
 
-    STATUS.innerText = "";
+    STATUS.innerText = '';
     for (let n = 0; n < CLASS_NAMES.length; n++) {
-      STATUS.innerText +=
-        CLASS_NAMES[n] + " data count: " + examplesCount[n] + ". ";
+      STATUS.innerText += CLASS_NAMES[n] + ' data count: ' + examplesCount[n] + '. ';
+      STATUS.innerHTML += '<br/>';
     }
 
     window.requestAnimationFrame(dataGatherLoop);
@@ -202,7 +235,7 @@ async function trainAndPredict() {
   predict = false;
   tf.util.shuffleCombo(trainingDataInputs, trainingDataOutputs);
 
-  let outputsAsTensor = tf.tensor1d(trainingDataOutputs, "int32");
+  let outputsAsTensor = tf.tensor1d(trainingDataOutputs, 'int32');
   let oneHotOutputs = tf.oneHot(outputsAsTensor, CLASS_NAMES.length);
   let inputsAsTensor = tf.stack(trainingDataInputs);
 
@@ -210,7 +243,7 @@ async function trainAndPredict() {
     shuffle: true,
     batchSize: 5,
     epochs: 10,
-    callbacks: { onEpochEnd: logProgress }
+    callbacks: { onEpochEnd: logProgress },
   });
 
   outputsAsTensor.dispose();
@@ -225,7 +258,7 @@ async function trainAndPredict() {
  * Log training progress.
  **/
 function logProgress(epoch, logs) {
-  console.log("Data for epoch " + epoch, logs);
+  console.log('Data for epoch ' + epoch, logs);
 }
 
 /**
@@ -238,32 +271,40 @@ function predictLoop() {
       let prediction = model.predict(imageFeatures.expandDims()).squeeze();
       let highestIndex = prediction.argMax().arraySync();
       let predictionArray = prediction.arraySync();
-      STATUS.innerText =
-        "Prediction: " +
-        CLASS_NAMES[highestIndex] +
-        " with " +
-        Math.floor(predictionArray[highestIndex] * 100) +
-        "% confidence";
+      predictionText.innerText = 'Prediction: ' + CLASS_NAMES[highestIndex];
     });
 
     window.requestAnimationFrame(predictLoop);
   }
 }
 
-/**
- * Purge data and start over. Note this does not dispose of the loaded
- * MobileNet model and MLP head tensors as you will need to reuse
- * them to train a new model.
- **/
-function reset() {
-  predict = false;
-  examplesCount.splice(0);
-  for (let i = 0; i < trainingDataInputs.length; i++) {
-    trainingDataInputs[i].dispose();
+var scaleFactor = 0.15;
+function capture(video, scaleFactor) {
+  if (scaleFactor == null) {
+    scaleFactor = 1;
   }
-  trainingDataInputs.splice(0);
-  trainingDataOutputs.splice(0);
-  STATUS.innerText = "No data collected";
+  var w = video.videoWidth * scaleFactor;
+  var h = video.videoHeight * scaleFactor;
+  var canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  var ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, w, h);
+  return canvas;
+}
 
-  console.log("Tensors in memory: " + tf.memory().numTensors);
+/**
+ * Invokes the <code>capture</code> function and attaches the canvas element to the DOM.
+ */
+function shoot(VIDEO_ELEMENT) {
+  var output = document.getElementById(VIDEO_ELEMENT.id + '-out');
+  var canvas = capture(VIDEO_ELEMENT, scaleFactor);
+  canvas.onclick = function () {
+    window.open(this.toDataURL(image / jpg));
+  };
+  snapshots.unshift(canvas);
+  output.innerHTML = '';
+  for (var i = 0; i < 200; i++) {
+    output.appendChild(snapshots[i]);
+  }
 }

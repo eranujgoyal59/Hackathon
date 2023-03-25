@@ -9,70 +9,71 @@
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <!-- <h1>
-      Make your own "Teachable Machine" using Transfer Learning with MobileNet
-      v3 in TensorFlow.js using saved graph model from TFHub.
-    </h1> -->
+    <div class="">
+      <h1>BELIVERS</h1>
+      <ol>
+        <li>First enable webcam and allow access when asked.</li>
+        <li>
+          Now find an object, point cam at it, click and hold gather class 1 data button to gather at least 30 samples.
+        </li>
+        <li>Repeat for class 2 with a different object of interest. Get similar number of samples.</li>
+        <li>
+          Click train and predict and wait while the model is trained live in your browser. No data is sent to server.
+        </li>
+        <li>Once trained you will see live predictions appear above the video for what it thinks it sees.</li>
+      </ol>
 
-    <p id="status">Awaiting TF.js load</p>
-    <div class="video-container">
-      <div>
-      <video id="webcam" autoplay></video>
-      <button id="enableCam">Enable Webcam 1</button>
-      <button class="dataCollector" data-1hot="0" data-name="Class 1">
-        Gather Class 1 Data
-      </button>
-      </div>
- 
-      <div>
-        <video id="webcam1" autoplay></video>
-        <button id="enableCam1">Enable Webcam</button>
-        <button id="data-collector" class="dataCollector" data-1hot="1" data-name="Class 2">
-          Gather Class 2 Data
-        </button>
-      </div>
-    </div>
+      <p id="status">Awaiting TF.js load</p>
+      <div class="video-container">
+        <div class="video-container-1">
+          <div class="inputs-container">
+            <input value="Class 1" id="class1_input" type="text" />
+            <button id="enableCam">Open Webcam</button>
+            <button id="data-collector-1" class="dataCollector" data-1hot="0" data-name="Class 1">
+              Click to Gather
+            </button>
+            <button id="webcamStop">Stop Gather</button>
+          </div>
+          <video id="webcam" autoplay data-1hot="0"></video>
+          <div id="webcam-out"></div>
+        </div>
 
-    <div class="video-predict-container">
-      <div>
-        <video id="webcam2" autoplay></video>
-        <!-- <button id="enableCam2">Enable Webcam</button> -->
-        <button id="train">Train &amp; Predict!</button>
+        <div id="">
+          <div class="inputs-container">
+            <input value="Class 2" id="class2_input" type="text" />
+            <button id="enableCam1">Open Webcam</button>
+            <button id="data-collector-2" class="dataCollector" data-1hot="1" data-name="Class 2">
+              Click to Gather
+            </button>
+            <button id="webcam1Stop" data-1hot="1">Stop Gather</button>
+          </div>
+          <video id="webcam1" autoplay data-1hot="1"></video>
+          <div id="webcam1-out"></div>
+        </div>
       </div>
-    </div>
 
-  
-<!--    
+      <button disabled id="train">Train &amp; Predict!</button>
+
+      <div class="video-predict-container">
+        <br />
+        <h1 id="predictionText"></h1>
+        <br />
+        <div>
+          <video id="webcam2" autoplay></video>
+          <!-- <button id="enableCam2">Enable Webcam</button> -->
+        </div>
+      </div>
+
+      <!--
     <button id="enableCam3">Enable Webcam</button>
-   
+
     <button id="reset">Reset</button> -->
 
-    <ol>
-      <li>First enable webcam and allow access when asked.</li>
-      <li>
-        Now find an object, point cam at it, click and hold gather class 1 data
-        button to gather at least 30 samples.
-      </li>
-      <li>
-        Repeat for class 2 with a different object of interest. Get similar
-        number of samples.
-      </li>
-      <li>
-        Click train and predict and wait while the model is trained live in your
-        browser. No data is sent to server.
-      </li>
-      <li>
-        Once trained you will see live predictions appear above the video for
-        what it thinks it sees.
-      </li>
-    </ol>
-    <!-- Import TensorFlow.js library -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"
-      type="text/javascript"
-    ></script>
+      <!-- Import TensorFlow.js library -->
+      <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js" type="text/javascript"></script>
 
-    <!-- Import the page's JavaScript to do some stuff -->
-    <script type="module" src="/imageDetection.js"></script>
+      <!-- Import the page's JavaScript to do some stuff -->
+      <script type="module" src="/imageDetection.js"></script>
+    </div>
   </body>
 </html>
