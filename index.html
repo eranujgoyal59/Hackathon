@@ -5,11 +5,270 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
     <!-- Import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <div class="">
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top header-transparent">
+      <div class="container d-flex align-items-center justify-content-between position-relative">
+
+        <div class="logo">
+          <h1 class="text-light"><a href="index.html"><span>Environmental Protection</span></a></h1>
+        </div>
+
+        <nav id="navbar" class="navbar">
+          <ul>
+            <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
+            <li><a class="nav-link scrollto" href="#training">Training</a></li>
+            <li><a class="nav-link scrollto" href="#prediction">Prediction</a></li>
+            <li><a class="nav-link scrollto" href="#instructions">Instructions</a></li>
+            <li><a class="nav-link scrollto" href="#team">Team</a></li>
+          </ul>
+          <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav>
+      </div>
+    </header>
+
+    <section id="home">
+      <div class="home-container" data-aos="fade-up">
+        <h1>Welcome to Home</h1>
+        <h2>We can predict dry wet status with artificial intelligence</h2>
+        <a href="#training" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
+      </div>
+    </section>
+
+    <main id="main">
+
+      <section id="training" class="training">
+
+        <div class="container">
+
+          <div class="section-title" data-aos="fade-in" data-aos-delay="100">
+            <h2>Training</h2>
+            <p>AI is ready for training. Train AI with two different set of samples according to the given instructions. These samples help AI to learn about two different types of items. Then AI will automatically recognize the items based on given input.</p>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 col-lg-5 d-flex align-items-stretch mb-5 mb-lg-0">
+              <div class=" row video-container-1">
+                <video id="webcam" autoplay data-1hot="0" class="col-lg-12 training-video"></video>
+                <div class="inputs-container row">
+                  <input id="class1_input" type="text" class="col-lg-3 col-md-6 col-sm-12 form-control" placeholder="First item's name"/>
+                  <button id="enableCam"  class="col-lg-4 col-sm-12 btn btn-outline-info">Open Webcam</button>
+                  <button id="data-collector-1" class="dataCollector col-lg-4 col-sm-12 btn btn-outline-success" data-1hot="0" data-name="Class 1">
+                    Click to Gather
+                  </button>
+                  <button id="webcamStop" class="col-lg-4 col-sm-12 btn btn-outline-secondary">Stop Gather</button>
+                </div>
+                <div id="webcam-out"></div>
+              </div>
+            </div>
+
+            <div class="col-lg-2 d-flex align-items-stretch mb-5 mb-lg-0">
+
+            </div>
+
+            <div class="col-md-12 col-lg-5 d-flex align-items-stretch mb-5 mb-lg-1">
+              <div class=" row video-container-1">
+                <video id="webcam1" autoplay data-1hot="1" class="col-lg-12 training-video"></video>
+                <div class="inputs-container row">
+                  <input id="class2_input" type="text" class="col-lg-3 col-md-6 col-sm-12 form-control" placeholder="Second item's name"/>
+                  <button id="enableCam1"  class="col-lg-4 col-sm-12 btn btn-outline-info">Open Webcam</button>
+                  <button id="data-collector-2" class="dataCollector col-lg-4 col-sm-12 btn btn-outline-success" data-1hot="1" data-name="Class 2">
+                    Click to Gather
+                  </button>
+                  <button id="webcam1Stop"  data-1hot="1" class="col-lg-4 col-sm-12 btn btn-outline-secondary">Stop Gather</button>
+                </div>
+                <div id="webcam1-out"></div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+        <!-- <p id="status">Awaiting TF.js load</p>
+        <div class="video-container">
+          <div class="video-container-1">
+            <div class="inputs-container">
+              <input value="Class 1" id="class1_input" type="text" />
+              <button id="enableCam">Open Webcam</button>
+              <button id="data-collector-1" class="dataCollector" data-1hot="0" data-name="Class 1">
+                Click to Gather
+              </button>
+              <button id="webcamStop">Stop Gather</button>
+            </div>
+            <video id="webcam" autoplay data-1hot="0"></video>
+            <div id="webcam-out"></div>
+          </div>
+  
+          <div id="">
+            <div class="inputs-container">
+              <input value="Class 2" id="class2_input" type="text" />
+              <button id="enableCam1">Open Webcam</button>
+              <button id="data-collector-2" class="dataCollector" data-1hot="1" data-name="Class 2">
+                Click to Gather
+              </button>
+              <button id="webcam1Stop" data-1hot="1">Stop Gather</button>
+            </div>
+            <video id="webcam1" autoplay data-1hot="1"></video>
+            <div id="webcam1-out"></div>
+          </div>
+        </div> -->
+      </section>
+
+      <section id="prediction"  class="prediction">
+
+        <div class="container">
+
+          <div class="section-title" data-aos="fade-in" data-aos-delay="100">
+            <h2>Prediction</h2>
+            <p>AI is ready for prediction. Show the different items to it and it will identify which item it is what.</p>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              <button disabled id="train" class="btn btn-primary">Train &amp; Predict!</button>
+            </div>
+          </div>
+
+          <div class="video-predict-container">
+            <div class="row">
+              <div class="col-lg-2"></div>
+              <div class="col-lg-8 col-sm-12">
+                <h1 id="predictionText"></h1>
+              </div>
+            </div>
+            <!-- <h1 id="predictionText"></h1>
+            <br /> -->
+
+            <div class="row">
+              <div class="col-lg-2"></div>
+              <div class="col-lg-8 col-sm-12">
+                <video id="webcam2" autoplay class="prediction-video"></video>
+                <!-- <button id="enableCam2">Enable Webcam</button> -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <section id="instructions" class="instructions">
+        <div class="container">
+          <div class="section-title" data-aos="fade-in" data-aos-delay="100">
+            <h2>Instructions</h2>
+          </div>
+
+          <div>
+            <p>Follow the below instructions for training and prediction of AI -</p>
+            <ol>
+              <li>First enable webcam and allow access when asked.</li>
+              <li>
+                Now find an object, point cam at it, click and hold gather class 1 data button to gather at least 30 samples.
+              </li>
+              <li>Repeat for class 2 with a different object of interest. Get similar number of samples.</li>
+              <li>
+                Click train and predict and wait while the model is trained live in your browser. No data is sent to server.
+              </li>
+              <li>Once trained you will see live predictions appear above the video for what it thinks it sees.</li>
+            </ol>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======= Team Section ======= -->
+    <section id="team" class="team">
+      <div class="container">
+
+        <div class="section-title" data-aos="fade-in" data-aos-delay="100">
+          <h2>BELIVERS</h2>
+          <p>It takes great pains to benefit. His needs result from something that actually drives him away. Let them be what they want. Anyone whom anyone desires. And no one who hinders receives the others. Because he should flee in this office of convenience, which is here.</p>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-3 col-md-6">
+            <div class="member" data-aos="fade-up">
+              <div class="pic"><img src="assets/images/team-member.jfif" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Tarun Garg</h4>
+                <span>Developer</span>
+                <div class="social">
+                  <a href=""><i class="bi bi-twitter"></i></a>
+                  <a href=""><i class="bi bi-facebook"></i></a>
+                  <a href=""><i class="bi bi-instagram"></i></a>
+                  <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="member" data-aos="fade-up" data-aos-delay="150">
+              <div class="pic"><img src="assets/images/team-member.jfif" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Anuj Goyal</h4>
+                <span>Developer</span>
+                <div class="social">
+                  <a href=""><i class="bi bi-twitter"></i></a>
+                  <a href=""><i class="bi bi-facebook"></i></a>
+                  <a href=""><i class="bi bi-instagram"></i></a>
+                  <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="member" data-aos="fade-up" data-aos-delay="300">
+              <div class="pic"><img src="assets/images/team-member.jfif" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Shubham Sharma</h4>
+                <span>Developer</span>
+                <div class="social">
+                  <a href=""><i class="bi bi-twitter"></i></a>
+                  <a href=""><i class="bi bi-facebook"></i></a>
+                  <a href=""><i class="bi bi-instagram"></i></a>
+                  <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="member" data-aos="fade-up" data-aos-delay="300">
+              <div class="pic"><img src="assets/images/team-member.jfif" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Shivam Gupta</h4>
+                <span>Developer</span>
+                <div class="social">
+                  <a href=""><i class="bi bi-twitter"></i></a>
+                  <a href=""><i class="bi bi-facebook"></i></a>
+                  <a href=""><i class="bi bi-instagram"></i></a>
+                  <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Team Section -->
+
+    </main>
+    
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <!-- <div class="">
       <h1>BELIVERS</h1>
       <ol>
         <li>First enable webcam and allow access when asked.</li>
@@ -23,36 +282,9 @@
         <li>Once trained you will see live predictions appear above the video for what it thinks it sees.</li>
       </ol>
 
-      <p id="status">Awaiting TF.js load</p>
-      <div class="video-container">
-        <div class="video-container-1">
-          <div class="inputs-container">
-            <input value="Class 1" id="class1_input" type="text" />
-            <button id="enableCam">Open Webcam</button>
-            <button id="data-collector-1" class="dataCollector" data-1hot="0" data-name="Class 1">
-              Click to Gather
-            </button>
-            <button id="webcamStop">Stop Gather</button>
-          </div>
-          <video id="webcam" autoplay data-1hot="0"></video>
-          <div id="webcam-out"></div>
-        </div>
+      </div> -->
 
-        <div id="">
-          <div class="inputs-container">
-            <input value="Class 2" id="class2_input" type="text" />
-            <button id="enableCam1">Open Webcam</button>
-            <button id="data-collector-2" class="dataCollector" data-1hot="1" data-name="Class 2">
-              Click to Gather
-            </button>
-            <button id="webcam1Stop" data-1hot="1">Stop Gather</button>
-          </div>
-          <video id="webcam1" autoplay data-1hot="1"></video>
-          <div id="webcam1-out"></div>
-        </div>
-      </div>
-
-      <button disabled id="train">Train &amp; Predict!</button>
+      <!-- <button disabled id="train">Train &amp; Predict!</button>
 
       <div class="video-predict-container">
         <br />
@@ -60,9 +292,8 @@
         <br />
         <div>
           <video id="webcam2" autoplay></video>
-          <!-- <button id="enableCam2">Enable Webcam</button> -->
         </div>
-      </div>
+      </div> -->
 
       <!--
     <button id="enableCam3">Enable Webcam</button>
@@ -74,6 +305,14 @@
 
       <!-- Import the page's JavaScript to do some stuff -->
       <script type="module" src="/imageDetection.js"></script>
-    </div>
+
+      <script type="module" src="/design.js"></script>
+
+      
+    <!-- </div> -->
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/purecounter/purecounter_vanilla.js" type="text/javascript"></script>
+    <script src="assets/vendor/aos/aos.js" type="text/javascript"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" type="text/javascript"></script>
   </body>
 </html>
